@@ -114,7 +114,90 @@ class Graph {
       }
     }
   }
+
+  shortestPath(srcVertex, targetVertex){
+
+    let bsf = this.breadthFirstSearch(srcVertex);
+    let idxB = bsf.indexOf(targetVertex.value); 
+    let dsf = this.depthFirstSearch(srcVertex); 
+    let idxD = dsf.indexOf(targetVertex.value);
+    
+    let lessIdx = (idxB < idxD) ? idxB : idxD; 
+    let path = (idxB < idxD) ? bsf : dsf; 
+
+    path.splice(lessIdx + 1); 
+
+    return path
+  }
+
+  shortestPath2(srcVertex, targetVertex) {
+    //  if they are equal to each return the item 
+    console.log("srcVertex:", srcVertex)
+    console.log("targetVertex:", targetVertex)
+
+    if (srcVertex === targetVertex) {
+      return [srcVertex.value];
+    }
+    
+
+    let queue = [srcVertex];
+    console.log("queue:", queue)
+    let visited = new Set();
+    let predecessors = {};
+    // ? not sure what this is doing? 
+    console.log("predecessors:", predecessors)
+    let path = [];
+    console.log("path:", path)
+
+    while (queue.length) {
+      console.log("while is running")
+
+      // setting currentVertex as first item in queue 
+      let currentVertex = queue.shift();
+
+      // if item is in the graph and they are connected... 
+      if (currentVertex === targetVertex) {
+        console.log("targetVertex.value:", targetVertex.value)
+        console.log("predecessors:", predecessors)
+        console.log("predecessors[targetVertex.value]", predecessors[targetVertex.value])
+        // set stop = 
+        let stop = predecessors[targetVertex.value];
+        console.log("stop:", stop)
+
+        while (stop) {
+          path.push(stop);
+          stop = predecessors[stop];
+          console.log("stop!!:", stop)
+          // ? what is this line doing? 
+        }
+        path.unshift(srcVertex.value);
+        path.reverse();
+        return path;
+      }
+
+      visited.add(currentVertex);
+      console.log("currentVertex.adjacent:", currentVertex.adjacent);
+
+      for (let neighbor of currentVertex.adjacent) {
+        // loop through adjacent items 
+        // if visited set not have that adjacent item, 
+        if (!visited.has(neighbor)) {
+          // then we are adding an item to the predecessors with the key of neighbor value A, B, C etc
+          // the value with will be the currentVertec.val 
+
+          predecessors[neighbor.value] = currentVertex.value;
+          
+          // then we are pushing the neighbor onto the queue
+          queue.push(neighbor);
+          console.log("queue:", queue)
+        }
+      }
+    }
+  }
+
 }
+
+
 
 // *add vertex vertices 
 
@@ -269,44 +352,84 @@ class Graph {
 
 // *breadth first search 
 
-let graph = new Graph()
-let S = new Node('S');
-let P = new Node('P');
-let U = new Node('U');
-let X = new Node('X');
-let Q = new Node('Q');
-let Y = new Node('Y');
-let V = new Node('V');
-let R = new Node('R');
-let W = new Node('W');
-let T = new Node('T');
+// let graph = new Graph()
+// let S = new Node('S');
+// let P = new Node('P');
+// let U = new Node('U');
+// let X = new Node('X');
+// let Q = new Node('Q');
+// let Y = new Node('Y');
+// let V = new Node('V');
+// let R = new Node('R');
+// let W = new Node('W');
+// let T = new Node('T');
 
-graph.addVertices([S,P,U,X,Q,Y,V,R,W,T])
+// graph.addVertices([S,P,U,X,Q,Y,V,R,W,T])
 
-graph.addEdge(S, P);
-graph.addEdge(S, U);
+// graph.addEdge(S, P);
+// graph.addEdge(S, U);
 
-graph.addEdge(P, X);
-graph.addEdge(U, X);
+// graph.addEdge(P, X);
+// graph.addEdge(U, X);
 
-graph.addEdge(P, Q);
-graph.addEdge(U, V);
+// graph.addEdge(P, Q);
+// graph.addEdge(U, V);
 
-graph.addEdge(X, Q);
-graph.addEdge(X, Y);
-graph.addEdge(X, V);
+// graph.addEdge(X, Q);
+// graph.addEdge(X, Y);
+// graph.addEdge(X, V);
 
-graph.addEdge(Q, R);
-graph.addEdge(Y, R);
+// graph.addEdge(Q, R);
+// graph.addEdge(Y, R);
 
-graph.addEdge(Y, W);
-graph.addEdge(V, W);
+// graph.addEdge(Y, W);
+// graph.addEdge(V, W);
 
-graph.addEdge(R, T);
-graph.addEdge(W, T);
+// graph.addEdge(R, T);
+// graph.addEdge(W, T);
 
-// this is one option:
-let result = graph.breadthFirstSearch(S) // ['S', 'P', 'U', 'X', 'Q', 'V', 'Y', 'R', 'W', 'T']
+// // this is one option:
+// let result = graph.breadthFirstSearch(S) // ['S', 'P', 'U', 'X', 'Q', 'V', 'Y', 'R', 'W', 'T']
+// console.log("result:", result)
+
+// * shortest path 
+
+let graph = new Graph(); 
+let A = new Node('A'); 
+let B = new Node('B'); 
+let C = new Node('C'); 
+let D = new Node('D'); 
+let E = new Node('E'); 
+let F = new Node('F'); 
+let G = new Node('G'); 
+let H = new Node('H'); 
+let I = new Node('I'); 
+
+graph.addVertices([A,B,C,D,E,F,G,H,I])
+
+graph.addEdge(A, B)
+graph.addEdge(A, C)
+graph.addEdge(A, F)
+graph.addEdge(C, D)
+graph.addEdge(C, F)
+graph.addEdge(F, I)
+graph.addEdge(F, G)
+graph.addEdge(G, H)
+
+// let breadSearch = graph.breadthFirstSearch(A);
+// console.log("breadthSearch:", breadSearch); 
+
+// let depthSearch = graph.depthFirstSearch(A);
+// console.log("depththSearch:", depthSearch); 
+
+// let result = graph.shortestPath(A, H) // [A, F, G, H]
+
+let result = graph.shortestPath2(A, H) // [A, F, G, H]
 console.log("result:", result)
+
+
+
+
+
 
 module.exports = {Graph, Node}
